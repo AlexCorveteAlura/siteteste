@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Música</title>
+    <style>
+        /* Estilização do Fundo e Layout */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            /* Substitua 'sua-imagem.jpg' pelo link ou nome do arquivo da sua imagem 1920x1080 */
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('sua-imagem.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+
+        /* Player Container */
+        .player-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            width: 300px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        button {
+            background: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Barra de Tempo */
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: #fff;
+        }
+
+        .time-display {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Minha Música</h1>
+
+    <div class="player-container">
+        <audio id="meuAudio" src="sua-musica.mp3"></audio>
+        
+        <div class="controls">
+            <button onclick="togglePlay()" id="btnPlay">Play</button>
+        </div>
+
+        <input type="range" id="progresso" value="0" max="100">
+        
+        <div class="time-display">
+            <span id="tempoAtual">0:00</span>
+            <span id="tempoTotal">0:00</span>
+        </div>
+    </div>
+
+    <script>
+        const audio = document.getElementById('meuAudio');
+        const btnPlay = document.getElementById('btnPlay');
+        const barraProgresso = document.getElementById('progresso');
+        const tempoAtual = document.getElementById('tempoAtual');
+        const tempoTotal = document.getElementById('tempoTotal');
+
+        // Função Play/Pause
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                btnPlay.innerText = "Pause";
+            } else {
+                audio.pause();
+                btnPlay.innerText = "Play";
+            }
+        }
+
+        // Atualiza a barra de progresso e o tempo texto
+        audio.ontimeupdate = () => {
+            const progresso = (audio.currentTime / audio.duration) * 100;
+            barraProgresso.value = progresso || 0;
+            
+            tempoAtual.innerText = formatarTempo(audio.currentTime);
+            if(audio.duration) {
+                tempoTotal.innerText = formatarTempo(audio.duration);
+            }
+        };
+
+        // Permite clicar na barra para pular partes da música
+        barraProgresso.oninput = () => {
+            const tempoDestino = (barraProgresso.value / 100) * audio.duration;
+            audio.currentTime = tempoDestino;
+        };
+
+        // Formata segundos em MM:SS
+        function formatarTempo(segundos) {
+            const min = Math.floor(segundos / 60);
+            const seg = Math.floor(segundos % 60);
+            return `${min}:${seg < 10 ? '0' + seg : seg}`;
+        }
+    </script>
+</body>
+</html>
